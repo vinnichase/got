@@ -1,0 +1,21 @@
+{
+  "name": "got",
+  "version": "0.1.0",
+  "description": "{{package-description}}",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "publish:prod": "npm version patch && npm run build && npm publish",
+    "lint": "tslint \"src/**/*.ts\"",
+    "test": "echo 'no tests'"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/core-js": "2.5.0",
+    "@types/node": "10.5.2",
+    "tslint": "5.10.0",
+    "typescript": "2.9.2"
+  }
+}
