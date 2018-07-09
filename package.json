@@ -1,21 +1,27 @@
 {
-  "name": "got",
-  "version": "0.1.0",
-  "description": "{{package-description}}",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "rimraf ./dist && tsc",
-    "publish:prod": "npm version patch && npm run build && npm publish",
-    "lint": "tslint \"src/**/*.ts\"",
-    "test": "echo 'no tests'"
-  },
-  "dependencies": {
-  },
-  "devDependencies": {
-    "@types/core-js": "2.5.0",
-    "@types/node": "10.5.2",
-    "tslint": "5.10.0",
-    "typescript": "2.9.2"
-  }
+    "name": "got",
+    "version": "0.1.0",
+    "description": "{{package-description}}",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "start": "npm run build && node ./dist/got.js",
+        "build": "rimraf ./dist && tsc",
+        "publish:prod": "npm version patch && npm run build && npm publish",
+        "lint": "tslint \"src/**/*.ts\"",
+        "test": "echo 'no tests'"
+    },
+    "dependencies": {
+        "lodash": "^4.17.10",
+        "uuid": "^3.3.2"
+    },
+    "devDependencies": {
+        "@types/core-js": "2.5.0",
+        "@types/node": "10.5.2",
+        "@types/uuid": "^3.4.3",
+        "nodemon": "^1.17.5",
+        "ts-node": "^7.0.0",
+        "tslint": "5.10.0",
+        "typescript": "2.9.2"
+    }
 }
