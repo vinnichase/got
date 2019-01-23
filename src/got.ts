@@ -1,89 +1,55 @@
-import { cloneDeep } from 'lodash';
 
 export const got = (state?) => {
-    return new Got(state);
+    return Got(state);
 };
 
-class Got {
-    public state: GotState;
-    [id: string]: any;
-    private predicates: any = {};
+// Helper Functions
 
-    constructor(state?: GotState) {
-        this.state = state ? cloneDeep(state) : { entities: {}, triples: [] };
-        this.state.entities = this.state.entities || {};
-        this.state.triples = this.state.triples || [];
-    }
+const wrapWith =
+    (wrapper: any) =>
+        (state: GotState) =>
+            (stateTransition) => (...args) => wrapper(stateTransition(state, ...args));
+const wrapWithGot = wrapWith(Got);
 
-    public predicate(name: string, objectType: string): Got {
-        this.predicates[name] = new GotOperator(this.state, objectType);
-        this.predicates[name].fit(this.predicates);
-        return this;
-    }
-
-    public put(entity: GotEntity): Got {
-        this.state.entities[entity.id] = entity;
-        return this;
-    }
-
-    public triple() {
-
-    }
+// Expression Builder
+function Got(state: GotState = { nodes: {}, edges: [] }): GotOperator {
+    const applyStateTransition = wrapWithGot(state);
+    return {
+        node:
+            applyStateTransition((oldState: GotState, node: GotNode) =>
+                ({ nodes: { ...oldState.nodes, [node.id]: node }, edges: oldState.edges }),
+            ) as AddNode,
+        edge:
+            applyStateTransition((oldState: GotState, edge: GotEdge) =>
+                ({ ...oldState, edges: [...oldState.edges, edge] }),
+            ) as AddEdge,
+        state: () => state,
+    };
 }
 
-class GotOperator {
+type AddNode = (node: GotNode) => GotOperator;
+type AddEdge = (edge: GotEdge) => GotOperator;
 
-    private subject: string = '';
-
-    constructor(private state: GotState, private objectType: string = '') {}
-
-    public put(entity: GotEntity) {
-        this.state.entities[entity.id] = entity;
-        if (this.objectType && this.subject) {
-            this.state.triples.push({
-                subject: this.subject,
-                predicate: 'contains',
-                object: entity.id,
-                objectType: this.objectType,
-            });
-        }
-        return this;
-    }
-
-    public fit(predicates: any): GotOperator {
-        return Object.assign(this, predicates);
-    }
-
-    public setSubject(subject: string): GotOperator {
-        this.subject = subject;
-        return this;
-    }
+interface GotOperator {
+    node: AddNode;
+    edge: AddEdge;
+    state: () => GotState;
 }
 
 interface GotState {
-    entities: { [id: string]: GotEntity };
-    triples: GotTriple[];
+    nodes: { [id: string]: GotNode };
+    edges: GotEdge[];
 }
 
-interface GotEntity {
+interface GotNode {
     id: string;
     name?: string;
+    [key: string]: any;
 }
 
 interface GotEdge {
-    id?: string;
-    [id: string]: string;
-}
-
-interface GotTriple {
-    subject: string;
-    predicate: string;
-    object: string;
-
-    subjectType?: string;
-    objectType?: string;
-}
-
-function last<T>(arr: T[]): T {
-    return arr[arr.length - 1];
+    from: string;
+    fromType: string;
+    to: string;
+    toType: string;
 }

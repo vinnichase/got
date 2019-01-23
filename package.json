@@ -5,23 +5,23 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "start": "npm run build && node ./dist/main.js",
+        "start": "ts-node ./src/main.ts",
         "build": "rimraf ./dist && tsc",
-        "publish:prod": "npm version patch && npm run build && npm publish",
         "lint": "tslint \"src/**/*.ts\"",
         "test": "echo 'no tests'"
     },
     "dependencies": {
-        "lodash": "^4.17.10",
-        "uuid": "^3.3.2"
+        "ramda": "0.26.1",
+        "uuid": "3.3.2"
     },
     "devDependencies": {
         "@types/core-js": "2.5.0",
-        "@types/node": "10.5.2",
-        "@types/uuid": "^3.4.3",
-        "nodemon": "^1.17.5",
-        "ts-node": "^7.0.0",
-        "tslint": "5.10.0",
-        "typescript": "2.9.2"
+        "@types/node": "10.12.18",
+        "@types/uuid": "3.4.4",
+        "@types/ramda": "0.25.47",
+        "nodemon": "1.18.9",
+        "ts-node": "8.0.1",
+        "tslint": "5.12.1",
+        "typescript": "3.2.4"
     }
 }
