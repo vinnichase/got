@@ -7,19 +7,18 @@ export const got = (state?) => {
 class Got {
     public state: GotState;
     [id: string]: any;
+    private predicates: any = {};
 
     constructor(state?: GotState) {
-        this.state = state ? cloneDeep(state) : { entities: {}, edges: {} };
+        this.state = state ? cloneDeep(state) : { entities: {}, triples: [] };
         this.state.entities = this.state.entities || {};
-        this.state.edges = this.state.edges || {};
+        this.state.triples = this.state.triples || [];
     }
 
-    public type(name: string): Got {
-        this[name] = this.operator(name, 'typeof');
-        return this.put({
-            id: name,
-            name,
-        }).edge(name, name, 'type');
+    public predicate(name: string, objectType: string): Got {
+        this.predicates[name] = new GotOperator(this.state, objectType);
+        this.predicates[name].fit(this.predicates);
+        return this;
     }
 
     public put(entity: GotEntity): Got {
@@ -27,41 +26,43 @@ class Got {
         return this;
     }
 
-    public edge(from: string, to?: string, type: string = 'default', twoWay: boolean = false) {
-        const edge: GotEdge = {
-            [from]: to || null
-        };
-        if (twoWay && to) {
-            edge[to] = from;
-        }
-        if (this.state.edges[type]) {
-            this.state.edges[type].push(edge);
-        } else {
-            this.state.edges[type] = [edge];
+    public triple() {
+
+    }
+}
+
+class GotOperator {
+
+    private subject: string = '';
+
+    constructor(private state: GotState, private objectType: string = '') {}
+
+    public put(entity: GotEntity) {
+        this.state.entities[entity.id] = entity;
+        if (this.objectType && this.subject) {
+            this.state.triples.push({
+                subject: this.subject,
+                predicate: 'contains',
+                object: entity.id,
+                objectType: this.objectType,
+            });
         }
         return this;
     }
 
-    private operator(id: string, type: string) {
-        return {
-            put: (entity: GotEntity) => {
-                return this.put(entity).edge(id, entity.id, type);
-            },
-            get: (selector?: string) => {
-                if (!selector) {
-                } else {
-                    return this.state.edges[type]
-                        .filter(e => e[id])
-                        .map(e => this.state.entities[e[id]]);
-                }
-            },
-        }
+    public fit(predicates: any): GotOperator {
+        return Object.assign(this, predicates);
+    }
+
+    public setSubject(subject: string): GotOperator {
+        this.subject = subject;
+        return this;
     }
 }
 
 interface GotState {
     entities: { [id: string]: GotEntity };
-    edges: { [type: string]: GotEdge[] };
+    triples: GotTriple[];
 }
 
 interface GotEntity {
@@ -72,4 +73,17 @@ interface GotEntity {
 interface GotEdge {
     id?: string;
     [id: string]: string;
+}
+
+interface GotTriple {
+    subject: string;
+    predicate: string;
+    object: string;
+
+    subjectType?: string;
+    objectType?: string;
+}
+
+function last<T>(arr: T[]): T {
+    return arr[arr.length - 1];
 }
