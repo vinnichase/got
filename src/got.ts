@@ -29,7 +29,7 @@ class Got {
 
     public edge(from: string, to?: string, type: string = 'default', twoWay: boolean = false) {
         const edge: GotEdge = {
-            [from]: to || null
+            [from]: to || null,
         };
         if (twoWay && to) {
             edge[to] = from;
@@ -55,7 +55,7 @@ class Got {
                         .map(e => this.state.entities[e[id]]);
                 }
             },
-        }
+        };
     }
 }
 
