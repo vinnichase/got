@@ -7,21 +7,19 @@ export const got = (state?) => {
 
 const wrapWith =
     (wrapper: any) =>
-        (state: GotState) =>
-            (stateTransition) => (...args) => wrapper(stateTransition(state, ...args));
-const wrapWithGot = wrapWith(Got);
+        (stateTransition) => (...args) => wrapper(stateTransition(...args));
+const applyStateTransition = wrapWith(Got);
 
 // Expression Builder
 function Got(state: GotState = { nodes: {}, edges: [] }): GotOperator {
-    const applyStateTransition = wrapWithGot(state);
     return {
         node:
-            applyStateTransition((oldState: GotState, node: GotNode) =>
-                ({ nodes: { ...oldState.nodes, [node.id]: node }, edges: oldState.edges }),
+            applyStateTransition((node: GotNode) =>
+                ({ nodes: { ...state.nodes, [node.id]: node }, edges: state.edges }),
             ) as AddNode,
         edge:
-            applyStateTransition((oldState: GotState, edge: GotEdge) =>
-                ({ ...oldState, edges: [...oldState.edges, edge] }),
+            applyStateTransition((edge: GotEdge) =>
+                ({ ...state, edges: [...state.edges, edge] }),
             ) as AddEdge,
         state: () => state,
     };
