@@ -8,19 +8,21 @@ const wrapStateTransitionWith =
         (stateTransition) => (...args) => wrapper(stateTransition(...args));
 const applyStateTransition = wrapStateTransitionWith(Got);
 
-const matchEdge = (edge: GotEdge, id: string, type: string): boolean =>
+const filterEdges = (edges: GotEdge[], id: string, type: string): GotEdge[] => edges.filter(edge =>
     edge.to === id && edge.fromType === type ||
-    edge.from === id && edge.toType === type;
+    edge.from === id && edge.toType === type);
 const getEdgeOppositeId = (edge: GotEdge, id: string): string =>
-    edge.from === id ? edge.to : edge.to === id ? edge.from : undefined;
+    edge && edge.from === id ? edge.to :
+        edge && edge.to === id ? edge.from : undefined;
 
 const getLensForState =
     (state: GotState): GetLens =>
         (id: string): GotLens => ({
-            view: () => ({ ...state.nodes[id] }),
-            list: (type: string) => state.edges
-                .filter(edge => matchEdge(edge, id, type))
+            view: () => id ? { ...state.nodes[id] } : undefined,
+            list: (type: string) => filterEdges(state.edges, id, type)
                 .map(edge => getLensForState(state)(getEdgeOppositeId(edge, id))),
+            first: (type: string) => getLensForState(state)(getEdgeOppositeId(
+                filterEdges(state.edges, id, type)[0], id)),
         });
 
 function Got(state: GotState = { nodes: {}, edges: [] }): GotOperator {
@@ -54,6 +56,7 @@ type GetNode = () => GotNode;
 export interface GotLens {
     view: GetNode;
     list: GetLenses;
+    first: (type: string) => GotLens;
 }
 
 export interface GotState {
