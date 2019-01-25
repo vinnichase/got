@@ -36,37 +36,42 @@ const gg = g
     .node({ id: 'room44', name: 'Raum 44' })
     .edge({ from: 'floor4', fromType: 'floor', to: 'room44', toType: 'room' });
 
-gg.lens('floor2').view();
+const a = gg.lens('floor2').view();
 // View single node of id ('floor2')
 // => { id: 'floor2', name: 'Etage 2' }
 
-gg.lens('floor2').list('room')
+const b = gg.lens('floor2').list('room')
     .map(lens => lens.view());
 // View connected nodes of type ('room') in both directions
 // => [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ...]
 
-gg.lens('floor2').list('room')[0].view();
+const c = gg.lens('floor2').list('room')[0].view();
 // View first connected node of type ('room')
 // => { id: 'room21', name: 'Raum 21' }
 
-gg.lens('house1').list('floor')
+const d = gg.lens('house1').list('floor')
     .map(floorLens => floorLens.list('room')
         .map(roomLens => roomLens.view()));
 // View connected nodes of type ('room') of connected nodes of type ('floor')
 // => [ [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ...],[ { id: 'room31', name: 'Raum 31' }, ...] ...]
 
-gg.lens('house1').list('floor')
+const e = gg.lens('house1').list('floor')
     .map(floorLens => floorLens.list('room'))
-    .reduce((a, b) => a.concat(b))
+    .reduce((flat, next) => flat.concat(next))
     .map(roomLens => roomLens.view());
 // View connected nodes of type ('room') of connected nodes of type ('floor') flattened
 // => [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ..., { id: 'room31', name: 'Raum 31' }, ...]
 
-gg.lens('floor1').list('room')
+const f = gg.lens('floor2').list('room')
     .filter(lens => lens.view().description)
     .map(roomLens => roomLens.view());
 // View connected nodes of type ('room') filtered (description present)
-// => [ { id: 'room22', name: 'Raum 22', description: 'Wohnzimmer' }, { id: 'room32', name: 'Raum 32', description: 'Wohnzimmer' } ...]
+// => [ { id: 'room22', name: 'Raum 22', description: 'Wohnzimmer' } ]
 
 // console.log(JSON.stringify(state, null, 2));
-console.log(gg.state());
+// console.log('a:', a);
+// console.log('b:', b);
+// console.log('c:', c);
+// console.log('d:', d);
+// console.log('e:', e);
+console.log('f:', f);
