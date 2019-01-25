@@ -40,11 +40,12 @@ gg.lens('floor2').view();
 // View single node of id ('floor2')
 // => { id: 'floor2', name: 'Etage 2' }
 
-gg.lens('floor2').list('room').view();
+gg.lens('floor2').list('room')
+    .map(lens => lens.view());
 // View connected nodes of type ('room') in both directions
 // => [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ...]
 
-gg.lens('floor2').first('room').view();
+gg.lens('floor2').list('room')[0].view();
 // View first connected node of type ('room')
 // => { id: 'room21', name: 'Raum 21' }
 
