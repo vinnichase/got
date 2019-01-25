@@ -17,15 +17,15 @@ const homeScreen = (
     return {
         house,
         floor,
-        room,
         floors: got.lens(house.id).list('floor').map(l => l.view()),
+        room,
         rooms: got.lens(floor.id).list('room').map(l => l.view()),
     };
 };
 
 const initialUiState: Partial<HomeScreenState> = {
     houseId: 'house1',
-    // floorId: 'floor2',
+    floorId: 'floor2',
 };
 const uiState = homeScreen(initialUiState, houseState);
 
