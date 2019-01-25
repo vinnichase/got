@@ -5,22 +5,33 @@ export const got = (state?) => {
 
 // Helper Functions
 
-const wrapWith =
+const wrapStateTransitionWith =
     (wrapper: any) =>
-        (stateTransition) => (...args) => wrapper(stateTransition(...args));
-const applyStateTransition = wrapWith(Got);
+        (stateTransition, cursor) => (...args) => wrapper(stateTransition(...args), cursor);
+const applyStateTransition = wrapStateTransitionWith(Got);
+const wrapQueryWith =
+    (wrapper: any) =>
+        (state: GotState) =>
+            (query, cursor) => (...args) => wrapper(state, cursor);
+const applyQuery = wrapQueryWith(Got);
 
 // Expression Builder
-function Got(state: GotState = { nodes: {}, edges: [] }): GotOperator {
+function Got(state: GotState = { nodes: {}, edges: [] }, cursor: GotCursor = { nodes: [], edges: [] }) {
+    const applyStateQuery = applyQuery(state);
     return {
         node:
-            applyStateTransition((node: GotNode) =>
-                ({ nodes: { ...state.nodes, [node.id]: node }, edges: state.edges }),
+            applyStateTransition(
+                (node: GotNode) =>
+                    ({ nodes: { ...state.nodes, [node.id]: node }, edges: state.edges }),
+                cursor,
             ) as AddNode,
         edge:
-            applyStateTransition((edge: GotEdge) =>
-                ({ ...state, edges: [...state.edges, edge] }),
+            applyStateTransition(
+                (edge: GotEdge) =>
+                    ({ ...state, edges: [...state.edges, edge] }),
+                cursor,
             ) as AddEdge,
+        entry: '',
         state: () => state,
     };
 }
@@ -32,6 +43,11 @@ interface GotOperator {
     node: AddNode;
     edge: AddEdge;
     state: () => GotState;
+}
+
+interface GotCursor {
+    nodes: GotNode[];
+    edges: GotEdge[];
 }
 
 interface GotState {
