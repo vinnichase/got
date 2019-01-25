@@ -11,15 +11,10 @@
         "test": "echo 'no tests'"
     },
     "dependencies": {
-        "ramda": "0.26.1",
-        "uuid": "3.3.2"
     },
     "devDependencies": {
         "@types/core-js": "2.5.0",
         "@types/node": "10.12.18",
-        "@types/uuid": "3.4.4",
-        "@types/ramda": "0.25.47",
-        "nodemon": "1.18.9",
         "ts-node": "8.0.1",
         "tslint": "5.12.1",
         "typescript": "3.2.4"
