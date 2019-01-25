@@ -48,36 +48,16 @@ gg.lens('floor2').first('room').view();
 // View first connected node of type ('room')
 // => { id: 'room21', name: 'Raum 21' }
 
-// gg.lens('floor2').listTo('room').view();
-// View connected nodes of type ('room') in outgoing direction
-// => [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ...]
-
-// gg.lens('floor2').listFrom('room').view();
-// View connected nodes of type ('room') in incoming direction
-// => [ ]
-
-// gg.lens('floor2').list('room').first().view();
-// View first connected node of type ('room')
-// => { id: 'room21', name: 'Raum 21' }
-
-// gg.lens('floor2').list('room').first(2).view();
-// View first two connected nodes of type ('room')
-// => [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' } ]
-
-// gg.lens('floor2').list('room').range(1, 2).view();
-// View second to third connected nodes of type ('room')
-// => [ { id: 'room22', name: 'Raum 22' }, { id: 'room23', name: 'Raum 23' } ]
-
-gg.lens('house1').list('floor').map(floorLens =>
-    floorLens.list('room').map(roomLens =>
-        roomLens.view()));
+gg.lens('house1').list('floor')
+    .map(floorLens => floorLens.list('room')
+        .map(roomLens => roomLens.view()));
 // View connected nodes of type ('room') of connected nodes of type ('floor')
 // => [ [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ...],[ { id: 'room31', name: 'Raum 31' }, ...] ...]
 
-gg.lens('house1').list('floor').map(floorLens =>
-    floorLens.list('room').map(roomLens =>
-        roomLens.view(),
-    )).reduce((a, b) => a.concat(b));
+gg.lens('house1').list('floor')
+    .map(floorLens => floorLens.list('room')
+        .map(roomLens => roomLens.view()),
+    ).reduce((a, b) => a.concat(b));
 // View connected nodes of type ('room') of connected nodes of type ('floor') flattened
 // => [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ..., { id: 'room31', name: 'Raum 31' }, ...]
 
