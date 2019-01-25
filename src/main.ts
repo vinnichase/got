@@ -55,9 +55,9 @@ gg.lens('house1').list('floor')
 // => [ [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ...],[ { id: 'room31', name: 'Raum 31' }, ...] ...]
 
 gg.lens('house1').list('floor')
-    .map(floorLens => floorLens.list('room')
-        .map(roomLens => roomLens.view()),
-    ).reduce((a, b) => a.concat(b));
+    .map(floorLens => floorLens.list('room'))
+    .reduce((a, b) => a.concat(b))
+    .map(roomLens => roomLens.view());
 // View connected nodes of type ('room') of connected nodes of type ('floor') flattened
 // => [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ..., { id: 'room31', name: 'Raum 31' }, ...]
 
