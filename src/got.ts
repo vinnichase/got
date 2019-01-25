@@ -41,7 +41,7 @@ type AddEdge = (edge: GotEdge) => GotOperator;
 type GetLens = (id: string) => GotLens;
 type GetState = () => GotState;
 
-interface GotOperator {
+export interface GotOperator {
     node: AddNode;
     edge: AddEdge;
     lens: GetLens;
@@ -51,23 +51,23 @@ interface GotOperator {
 type GetLenses = (type: string) => GotLens[];
 type GetNode = () => GotNode;
 
-interface GotLens {
+export interface GotLens {
     view: GetNode;
     list: GetLenses;
 }
 
-interface GotState {
+export interface GotState {
     nodes: { [id: string]: GotNode };
     edges: GotEdge[];
 }
 
-interface GotNode {
+export interface GotNode {
     id: string;
     name?: string;
     [key: string]: any;
 }
 
-interface GotEdge {
+export interface GotEdge {
     from: string;
     fromType: string;
     to: string;

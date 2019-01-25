@@ -1,7 +1,6 @@
-import { got } from './got';
+import { got } from '../../src/got';
 
-const g = got();
-const gg = g
+export const houseState = got()
     .node({ id: 'house1', name: 'Haus 1', description: 'Vinnis Haus' })
     .node({ id: 'floor1', name: 'Etage 1' })
     .edge({ from: 'house1', fromType: 'house', to: 'floor1', toType: 'floor' })
@@ -35,43 +34,3 @@ const gg = g
     .edge({ from: 'floor4', fromType: 'floor', to: 'room43', toType: 'room' })
     .node({ id: 'room44', name: 'Raum 44' })
     .edge({ from: 'floor4', fromType: 'floor', to: 'room44', toType: 'room' });
-
-const a = gg.lens('floor2').view();
-// View single node of id ('floor2')
-// => { id: 'floor2', name: 'Etage 2' }
-
-const b = gg.lens('floor2').list('room')
-    .map(lens => lens.view());
-// View connected nodes of type ('room') in both directions
-// => [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ...]
-
-const c = gg.lens('floor2').list('room')[0].view();
-// View first connected node of type ('room')
-// => { id: 'room21', name: 'Raum 21' }
-
-const d = gg.lens('house1').list('floor')
-    .map(floorLens => floorLens.list('room')
-        .map(roomLens => roomLens.view()));
-// View connected nodes of type ('room') of connected nodes of type ('floor')
-// => [ [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ...],[ { id: 'room31', name: 'Raum 31' }, ...] ...]
-
-const e = gg.lens('house1').list('floor')
-    .map(floorLens => floorLens.list('room'))
-    .reduce((flat, next) => flat.concat(next))
-    .map(roomLens => roomLens.view());
-// View connected nodes of type ('room') of connected nodes of type ('floor') flattened
-// => [ { id: 'room21', name: 'Raum 21' }, { id: 'room22', name: 'Raum 22' }, ..., { id: 'room31', name: 'Raum 31' }, ...]
-
-const f = gg.lens('floor2').list('room')
-    .filter(lens => lens.view().description)
-    .map(roomLens => roomLens.view());
-// View connected nodes of type ('room') filtered (description present)
-// => [ { id: 'room22', name: 'Raum 22', description: 'Wohnzimmer' } ]
-
-// console.log(JSON.stringify(state, null, 2));
-// console.log('a:', a);
-// console.log('b:', b);
-// console.log('c:', c);
-// console.log('d:', d);
-// console.log('e:', e);
-console.log('f:', f);
