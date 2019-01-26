@@ -8,6 +8,7 @@
       "emitDecoratorMetadata": true,
       "emitDeclarationOnly": false,
       "experimentalDecorators": true,
+      "strict": true,
       "declaration": true,
       "declarationDir": "./dist",
       "target": "es6",
