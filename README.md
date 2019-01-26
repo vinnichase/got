@@ -1,2 +1,2 @@
 
-![](./docs/got-logo.png =250x)
+![](./docs/got-logo.png | width=100)
