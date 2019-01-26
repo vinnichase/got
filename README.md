@@ -16,7 +16,12 @@ On Node:
 ## Usage
 
 ```JavaScript
-const got = require('gotjs').got;
+const { got } = require('gotjs');
 
+const friends = got()
+    .node({ id: 'person1', name: 'Bob' })
+    .node({ id: 'person2', name: 'Alice' })
+    .edge({ from: 'person1', fromType: 'friend', to: 'person2', toType: 'friend' });
 
+console.log(friends.state());
 ```
