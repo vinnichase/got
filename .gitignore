@@ -3,3 +3,5 @@ dist
 .npmrc
 .idea
 *.log
+
+test.js
