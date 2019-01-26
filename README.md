@@ -24,4 +24,15 @@ const friends = got()
     .edge({ from: 'person1', fromType: 'friend', to: 'person2', toType: 'friend' });
 
 console.log(friends.state());
+
+// prints:
+// { nodes:
+//    { person1: { id: 'person1', name: 'Bob' },
+//      person2: { id: 'person2', name: 'Alice' } },
+//   edges:
+//    [ { from: 'person1',
+//        fromType: 'friend',
+//        to: 'person2',
+//        toType: 'friend' } ] }
+
 ```
