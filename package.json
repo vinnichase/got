@@ -1,6 +1,6 @@
 {
-    "name": "got",
-    "version": "0.1.0",
+    "name": "gotjs",
+    "version": "0.0.2",
     "description": "{{package-description}}",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -8,10 +8,12 @@
         "start:house": "ts-node ./examples/house/homeScreen.ts",
         "build": "rimraf ./dist && tsc",
         "lint": "tslint \"src/**/*.ts\"",
-        "test": "echo 'no tests'"
+        "test": "echo 'no tests'",
+        "publish:prod": "yarn version --minor && yarn build && yarn publish --non-interactive && git push --follow-tags",
+        "publish:patch": "yarn version --patch && yarn build && yarn publish --non-interactive && git push --follow-tags",
+        "publish:pre": "npm version prerelease && yarn build && yarn publish --non-interactive && git push --follow-tags"
     },
-    "dependencies": {
-    },
+    "dependencies": {},
     "devDependencies": {
         "@types/core-js": "2.5.0",
         "@types/node": "10.12.18",
