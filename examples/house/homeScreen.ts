@@ -1,16 +1,7 @@
 import { GotOperator } from '../../src/got';
 import { houseState } from './houseState';
 
-export interface HomeScreenState {
-    houseId: string;
-    floorId: string;
-    roomId: string;
-}
-
-const homeScreen = (
-    { houseId, floorId, roomId }: Partial<HomeScreenState>,
-    got: GotOperator,
-) => {
+const homeScreen = ({ houseId, floorId, roomId }, got: GotOperator) => {
     const houseLens = got.lens(houseId);
     const floorLens = got.lens(floorId, houseLens.first('floor'));
     const roomLens = got.lens(roomId, floorLens.first('room'));
@@ -24,10 +15,9 @@ const homeScreen = (
     };
 };
 
-const initialUiState: Partial<HomeScreenState> = {
-    houseId: 'house2',
-    // floorId: 'floor2',
-};
-const uiState = homeScreen(initialUiState, houseState);
+const uiState = homeScreen({
+    houseId: 'house1',
+    floorId: 'floor1',
+} as any, houseState);
 
 console.log(uiState);
