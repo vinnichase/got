@@ -1,1 +1,2 @@
-# got
+
+![](./docs/got-logo.png)
