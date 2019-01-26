@@ -1,6 +1,6 @@
 {
     "name": "gotjs",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "got is a fluent, functional, zero-dependency, in-memory JavaScript graph database. However it can be used with plain JS it is built with TypeScript and provides its own typings. got is more of a design pattern than a full-featured DB and therefore comes with a very small set of basic functionality at this point. Let's see where we can get.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -13,12 +13,11 @@
         "publish:patch": "yarn version --patch && yarn build && yarn publish --non-interactive && git push --follow-tags",
         "publish:pre": "npm version prerelease && yarn build && yarn publish --non-interactive && git push --follow-tags"
     },
-    "dependencies": {
-    },
+    "dependencies": {},
     "devDependencies": {
-        "gotjs": "^0.0.6",
         "@types/core-js": "2.5.0",
         "@types/node": "10.12.18",
+        "gotjs": "^0.0.6",
         "ts-node": "8.0.1",
         "tslint": "5.12.1",
         "typescript": "3.2.4"
