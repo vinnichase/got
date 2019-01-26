@@ -1,1 +1,1 @@
-# got
+<img src="./docs/got-logo.png" width="200">
