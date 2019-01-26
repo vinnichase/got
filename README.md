@@ -1,2 +1,1 @@
-
-![](./docs/got-logo.png | width=100)
+<img src="./docs/got-logo.png" width="200">
