@@ -13,6 +13,49 @@ On Node:
 
 `$ yarn add gotjs`
 
+## Naming
+- graph, object, types
+- gangster, opportunistic, transformation
+
+## Key Features
+- immutable state: structural sharing
+- custom sugar functions
+- no magic for the user (state is human readable)
+- views can be declared (Transformation of the graph, different graphs can be feeded in one view)
+- user has the full control of the data graph
+- nodes are dynamically typed
+- types of nodes are just defined via the edges (fromType and toType). This represents which role a node plays in the relationship with another one
+- 1-to-1: With first() -> If there is a 1-to-1 relation the user is responsible, that there is only one edge of this type to another object
+- 1-to-n, n-to-m Relations can be handled easily via the types of edge-ends
+- basic functional javascript with map, filter, reduce
+
+## Integrations
+- Redux
+- Cycle.js
+
+## Visions
+- Portal gothub.io
+  - Right-Management
+  - e2e encryption
+- Reactiveness / Streamify
+- Presentation Layer: configurable views
+- Visualization: Simple graph overview with all API actions
+- configure sugar functions in GotOperator
+
+## Documentation
+
+- GotOperator
+- GotLens
+- GotNode
+- GotEdge
+- GotState
+
+## CTA
+- Contribute on Visions
+- Report Issues
+- Fork and bring your own version life
+- Realize your own visions without me
+
 ## Usage
 
 ```JavaScript
@@ -36,3 +79,4 @@ console.log(friends.state());
 //        toType: 'friend' } ] }
 
 ```
+
