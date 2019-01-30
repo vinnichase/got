@@ -41,6 +41,7 @@ On Node:
 - Presentation Layer: configurable views
 - Visualization: Simple graph overview with all API actions
 - configure sugar functions in GotOperator
+- Setter in lenses
 
 ## Documentation
 
