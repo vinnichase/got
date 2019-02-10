@@ -181,7 +181,7 @@ To do so the got operator offers us one read operation `.lens(id)` which is heav
 
 But what is a lens? － for those who haven't heard about Ramda. A lens 🔎 can be described as a small window that is pointing at a node in the graph ready to perform more operations on the node it is pointing at. A lens will give you four functions for selecting nodes in the graph: `.view()`, `.list(type)`, `.first(type)` and `.prop(name)`.
 
-Let's start with the most straight forward function `.view()` which is just returning the object the lens is pointing at.
+Let's start with the most straight forward function `.view()` which is just returning the object the lens is pointing at:
 
 ```JavaScript
 const { got } = require('gotjs');
