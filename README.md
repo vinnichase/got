@@ -19,9 +19,9 @@ The package provides its own typings so you can use it with TypeScript out of th
 
 As any other [graph database](https://en.wikipedia.org/wiki/Graph_database) a got graph consists of exact two entities: **nodes** and **edges**. Nodes have a property `id` which uniquely identifies them in the whole graph. Additionally each node can contain an arbitrarily structured JavaScript object. Edges are defined by at least four properties `from`, `fromType`, `to` and `toType`. `from` and `to` are `id`s of two nodes which are connected by the edge which would practically be enough to define a very simple graph. But in order to represent any possible data structure we will need to define the type of connection between two nodes. In other words, we have to define the role that one node plays in connection with another. This can be done with the properies `fromType` and `toType`.
 
-Now since we know the basic elements of a got graph we should start writing the graph to have a foundation to play with.
-
 ### Writing the Graph State
+
+Now since we know the basic elements of a got graph we should start **writing** the graph to have a foundation to play with.
 
 Let's model a friendship between John and Paul:
 
@@ -59,7 +59,7 @@ Thats it! Now you have the basic building block for creating every graph that yo
 
 > Note that the initial invoke of `got()` and all chained write operations (`.node()` and `.edge()`) always return a got operator with the cloned graph being able to again perform all operations on its copy of the graph.
 
-Some of you might ask where the benefit is, when the input is as verbose as the output. The reason is that got wants to give you full responsibility for your data － meaning for instance you can create edges for nodes that don't even exist and vice versa. Therefore creating secure shortcuts is also under your responsibility. You can do so by creating custom sugar functions for repetetive tasks of your business logic:
+Some of you might ask where the benefit is, when the input is as verbose as the output. The reason is that got wants to give you full responsibility for your data － meaning you can create for instance edges for nodes that don't even exist and vice versa. Therefore creating secure shortcuts is also under your responsibility. You can do so by creating custom sugar functions for repetetive tasks of your business logic:
 
 ```JavaScript
 function addFriend(fromFriend, toFriend, gotOperator) {
@@ -114,7 +114,7 @@ console.log(friends3.state());
 //        toType: 'friend' } ] }
 ```
 
-See how our function did correctly create all the nodes and edges for us － awesome. The reassignment of the operations to `friends1`, `friends2` and `friends3` illustrates how the different steps of state mutation have no impact on previous states:
+See how our function did correctly create all the nodes and edges for us － awesome. The reassignments of the operations to `friends1`, `friends2` and `friends3` (and feeding them into the next state transition) illustrate how the different steps of state mutation have no impact on previous states:
 
 ```JavaScript
 console.log(friends1.state().nodes.person1);
@@ -173,17 +173,48 @@ console.log(johnsFriends.state());
 // prints the same state as before
 ```
 
-
-
 ### Reading the Graph State
 
-### Start from an Existing State
+Now since we learned how to write a got graph we should take a look on how to **read** from the graph. Of course by reading we don't mean to simply call `johnsFriends.state()` and look at the output. By reading we mean to call query operations on the got operator in a functional fashion so that we can make use of plain JS stuff like `.map()`, `.filter()` or `.reduce()`.
+
+To do so the got operator offers us one read operation `.lens(id)` which is heavily inspired by [Ramda](https://github.com/ramda/ramda) however it is implemented a little different plus that it only provides `.view()` to view the lenses content and no `.set()`.
+
+But what is a lens? － for those who haven't heard about Ramda. A lens 🔎 can be described as a small window that is pointing at a node in the graph ready to perform more operations on the node it is pointing at. A lens will give you four functions for selecting nodes in the graph: `.view()`, `.list(type)`, `.first(type)` and `.prop(name)`.
+
+Let's start with the most straight forward function `.view()` which is just returning the object the lens is pointing at.
+
+```JavaScript
+const { got } = require('gotjs');
+
+// Start over with an initial state of the previous examples
+const initialState = {
+    nodes: {
+        person1: { id: 'person1', name: 'John' },
+        person2: { id: 'person2', name: 'Paul' }
+    },
+    edges: [{
+        from: 'person1',
+        fromType: 'friend',
+        to: 'person2',
+        toType: 'friend'
+    }]
+};
+const friends = got(initialState);
+
+// Create a lens at person2 and view its content
+const person2 = friends.lens('person2').view();
+console.log(person2);
+
+// prints: { id: 'person2', name: 'Paul' }
+```
 
 
+
+<!-- 
 # Brainstorming
-<!-- ## Naming
+## Naming
 - graph, object, types
-- gangster, opportunistic, transformation -->
+- gangster, opportunistic, transformation 
 
 ## Key Features
 - immutable state: structural sharing
@@ -226,3 +257,4 @@ console.log(johnsFriends.state());
 - Fork and bring your own version life
 - Realize your own visions without me
 
+-->
