@@ -12,6 +12,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.18.tgz#1d3ca764718915584fcd9f6344621b7672665c67"
   integrity sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ==
 
+"@types/ramda@0.25.48":
+  version "0.25.48"
+  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.48.tgz#775fc56ae469394146edfff5996b201851bc39b6"
+  integrity sha512-tsNbe/ov4iweH8ADzQF0UN7TApU8iofYeZDZvfSyXQhfiZ2C2hUC3CN9EK0nYGIVqN+Ll5XelKHATDc50t3dlA==
+
 ansi-regex@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-2.1.1.tgz#c3b33ab5ee360d86e0e628f0468ae7ef27d654df"
@@ -119,6 +124,11 @@ concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
+
+dayjs@1.8.4:
+  version "1.8.4"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.8.4.tgz#e5a8fe080a7955e210045e6c26c5d1d4c88cf602"
+  integrity sha512-Gd2W9A8f40Dwr17/O1W12cC61PSq8aUGKBWRVMs7n4XQNwPPIM9m7YzZPHMlW465Sia6t5KlKK52rYd5oT2T6A==
 
 diff@^3.1.0, diff@^3.2.0:
   version "3.5.0"
@@ -228,6 +238,11 @@ path-parse@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
   integrity sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
+
+rambda@2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/rambda/-/rambda-2.3.1.tgz#155dab5bc16d9d0af9c39c210dc834640b3b5816"
+  integrity sha512-HSFkU+DEB4Y3iCzfeyGKQAYA+kscuCkasAq0JbdZPYvYNMia6kYBIGGBLkZGqtl9r9yhdqOwZFDZhgn0TAPvkQ==
 
 resolve@^1.3.2:
   version "1.10.0"

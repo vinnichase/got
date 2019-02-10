@@ -1,8 +1,8 @@
-# got
 <img src="https://raw.githubusercontent.com/vinnichase/got/master/docs/got-logo.png" width="200">
 
+# got
 
-got is a fluent, functional, zero-dependency, in-memory JavaScript **graph database**. However it can be used with plain JS it is built with TypeScript and provides its own typings. got is more of a design pattern than a full-featured DB and therefore comes with a very small set of basic functionality at this point. Let's see where we can get.
+got is a fluent, functional, zero-dependency, in-memory JavaScript **graph database**. You can create data structures at any degree of complexity within your JavaScript application both in the browser and Node.js. The whole database is represented in a state object which is basically a plain JavaScript object. The state is immutable, which means that existing states are never modified directly, instead a mutation will always result in a clone of the previous state, including the updates. For that reason, got is also perfect to manage heavily complex states with pure redux.
 
 **inspired by:** [Ramda](https://github.com/ramda/ramda), [Gun](https://github.com/amark/gun), [Redux](https://github.com/reduxjs/redux), [GraphQL](https://github.com/facebook/graphql), [Cycle.js](https://github.com/cyclejs/cyclejs) and [git](https://git-scm.com/) 😋
 
@@ -12,6 +12,171 @@ On Node:
 `$ npm i gotjs` or
 
 `$ yarn add gotjs`
+
+## Usage
+
+As any other [graph database](https://en.wikipedia.org/wiki/Graph_database) a got graph consists of exact two entities: **nodes** and **edges**. Nodes have a property `id` which uniquely identifies them in the whole graph. Additionally each node can contain an arbitrarily structured JavaScript object. Edges are defined by at least four properties `from`, `fromType`, `to` and `toType`. `from` and `to` are `id`s of two nodes which are connected by the edge wich would practically be enough to define a very simple graph. But in order to represent any possible data structure we will need to define the type of connection between two nodes. In other words, we have to define the role that one node plays in connection with another. This can be done with the properies `fromType` and `toType`.
+
+Now since we know the basic elements of a got graph we should start writing the graph to have a foundation to play with.
+
+### Writing the Graph State
+
+Let's model a friendship between John and Paul:
+
+```
+FIGURE: simple graph John <-> Paul
+```
+
+And in the code:
+```JavaScript
+const { got } = require('gotjs');
+
+const friends = got()
+    .node({ id: 'person1', name: 'John' })
+    .node({ id: 'person2', name: 'Paul' })
+    .edge({
+        from: 'person1',
+        fromType: 'friend',
+        to: 'person2',
+        toType: 'friend'
+    });
+
+console.log(friends.state());
+
+// prints:
+// { nodes:
+//    { person1: { id: 'person1', name: 'John' },
+//      person2: { id: 'person2', name: 'Paul' } },
+//   edges:
+//    [ { from: 'person1',
+//        fromType: 'friend',
+//        to: 'person2',
+//        toType: 'friend' } ] }
+```
+Thats it! Now you have the basic building block for creating every graph that you could think of. The output shows that there is no magic and no hidden information in the state － only the nodes and the edge that we created before. Now you also know the complete set of write operations for got: `.node()` and `.edge()`.
+
+> Note that the initial invoke of `got()` and all chained write operations (`.node()` and `.edge()`) always return a got operator with the cloned graph being able to again perform all operations on its copy of the graph.
+
+Some of you might ask where the benefit is, when the input is as verbose as the output. The reason is that got wants to give you full responsibility for your data － meaning for instance you can create edges for nodes that don't even exist and vice versa. Therefore creating secure shortcuts is also under your responsibility. You can do so by creating custom sugar functions for repetetive tasks of your business logic:
+
+```JavaScript
+function addFriend(fromFriend, toFriend, gotOperator) {
+    return gotOperator
+        .node(toFriend)
+        .edge({
+            from: fromFriend.id,
+            fromType: 'friend',
+            to: toFriend.id,
+            toType: 'friend'
+        });
+}
+```
+You can hide more complex logic in your custom functions to connect for example multiple nodes or work with collections. There are no limits.
+
+> You might also notice that this function returns a got operator containing an immutable copy of the state after the two write operations. So all the heavy users of **redux** should recognize the pattern: This is nothing more than a reducer function which is taking some arguments plus the old state (wrapped in the `gotOperator`) and returning a transformed state that did **not** mutate the old state at all. We will later learn in detail how to integrate got with redux.
+
+Now you can use it to quickly add friends:
+```JavaScript
+const { got } = require('gotjs');
+
+const john = { id: 'person1', name: 'John' };
+const paul = { id: 'person2', name: 'Paul' };
+const george = { id: 'person3', name: 'George' };
+const ringo = { id: 'person4', name: 'Ringo' };
+
+const friends = got().node(john);
+const friends1 = addFriend(john, paul, friends);
+const friends2 = addFriend(john, george, friends1);
+const friends3 = addFriend(john, ringo, friends2);
+
+// prints:
+// { nodes:
+//    { person1: { id: 'person1', name: 'John' },
+//      person2: { id: 'person2', name: 'Paul' },
+//      person3: { id: 'person3', name: 'George' },
+//      person4: { id: 'person4', name: 'Ringo' } },
+//   edges:
+//    [ { from: 'person1',
+//        fromType: 'friend',
+//        to: 'person2',
+//        toType: 'friend' },
+//      { from: 'person1',
+//        fromType: 'friend',
+//        to: 'person3',
+//        toType: 'friend' },
+//      { from: 'person1',
+//        fromType: 'friend',
+//        to: 'person4',
+//        toType: 'friend' } ] }
+```
+
+See how our function did correctly create all the nodes and edges for us － awesome. The reassignment of the operations to `friends1`, `friends2` and `friends3` illustrates how the different steps of state mutation have no impact on previous states:
+
+The above concepts come as heavily simplified examples. Of course you can apply concepts like [currying](https://en.wikipedia.org/wiki/Currying) the `addFriend(...)` function or [piping](https://ramdajs.com/docs/#pipe) multiple state transitons. There are no boundaries to your creativity in functional programming:
+
+
+
+```JavaScript
+const { got } = require('gotjs');
+const R = require('rambda');
+
+// Provide a curried version of addFriend
+const addFriend = (fromFriend, toFriend) => (gotOperator) => {
+    return gotOperator
+        .node(toFriend)
+        .edge({
+            from: fromFriend.id,
+            fromType: 'friend',
+            to: toFriend.id,
+            toType: 'friend'
+        });
+}
+
+const john = { id: 'person1', name: 'John' };
+const paul = { id: 'person2', name: 'Paul' };
+const george = { id: 'person3', name: 'George' };
+const ringo = { id: 'person4', name: 'Ringo' };
+
+const johnsGraph = got().node(john);
+
+// Pipe mutation operations together
+const addJohnsFriends = R.pipe(
+    addFriend(john, paul),
+    addFriend(john, george),
+    addFriend(john, ringo)
+);
+
+// Execute on johnsGraph
+const johnsFriends = addJohnsFriends(johnsGraph);
+
+console.log(johnsFriends.state());
+```
+
+```JavaScript
+console.log(friends1.state().nodes.person1);
+// prints: { id: 'person1', name: 'John' }
+
+console.log(friends1.state().nodes.person3);
+// prints: undefined
+
+console.log(friends2.state().nodes.person3);
+// prints: { id: 'person3', name: 'George' }
+```
+
+But don't be afraid that your memory gets spilled over after tons of operations. Even though the modified parts of the state are cloned, the unchanged parts however still share the same reference:
+
+```JavaScript
+const person1FirstState = friends1.state().nodes.person1;
+const person1SecondState = friends2.state().nodes.person1;
+console.log(person1FirstState === person1SecondState);
+// prints: true
+```
+> This is a very basic implementation of the idea of [structural sharing](https://www.youtube.com/watch?v=e-5obm1G_FY&t=16m14s).
+
+
+### Reading the Graph State
+
+### Start from an Existing State
 
 ## Naming
 - graph, object, types
@@ -56,28 +221,4 @@ On Node:
 - Report Issues
 - Fork and bring your own version life
 - Realize your own visions without me
-
-## Usage
-
-```JavaScript
-const { got } = require('gotjs');
-
-const friends = got()
-    .node({ id: 'person1', name: 'Bob' })
-    .node({ id: 'person2', name: 'Alice' })
-    .edge({ from: 'person1', fromType: 'friend', to: 'person2', toType: 'friend' });
-
-console.log(friends.state());
-
-// prints:
-// { nodes:
-//    { person1: { id: 'person1', name: 'Bob' },
-//      person2: { id: 'person2', name: 'Alice' } },
-//   edges:
-//    [ { from: 'person1',
-//        fromType: 'friend',
-//        to: 'person2',
-//        toType: 'friend' } ] }
-
-```
 
