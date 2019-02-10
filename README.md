@@ -13,9 +13,11 @@ On Node:
 
 `$ yarn add gotjs`
 
+The package provides its own typings so you can use it with TypeScript out of the box. However you can also start over with plain JS.
+
 ## Usage
 
-As any other [graph database](https://en.wikipedia.org/wiki/Graph_database) a got graph consists of exact two entities: **nodes** and **edges**. Nodes have a property `id` which uniquely identifies them in the whole graph. Additionally each node can contain an arbitrarily structured JavaScript object. Edges are defined by at least four properties `from`, `fromType`, `to` and `toType`. `from` and `to` are `id`s of two nodes which are connected by the edge wich would practically be enough to define a very simple graph. But in order to represent any possible data structure we will need to define the type of connection between two nodes. In other words, we have to define the role that one node plays in connection with another. This can be done with the properies `fromType` and `toType`.
+As any other [graph database](https://en.wikipedia.org/wiki/Graph_database) a got graph consists of exact two entities: **nodes** and **edges**. Nodes have a property `id` which uniquely identifies them in the whole graph. Additionally each node can contain an arbitrarily structured JavaScript object. Edges are defined by at least four properties `from`, `fromType`, `to` and `toType`. `from` and `to` are `id`s of two nodes which are connected by the edge which would practically be enough to define a very simple graph. But in order to represent any possible data structure we will need to define the type of connection between two nodes. In other words, we have to define the role that one node plays in connection with another. This can be done with the properies `fromType` and `toType`.
 
 Now since we know the basic elements of a got graph we should start writing the graph to have a foundation to play with.
 
@@ -89,6 +91,8 @@ const friends1 = addFriend(john, paul, friends);
 const friends2 = addFriend(john, george, friends1);
 const friends3 = addFriend(john, ringo, friends2);
 
+console.log(friends3.state());
+
 // prints:
 // { nodes:
 //    { person1: { id: 'person1', name: 'John' },
@@ -112,46 +116,6 @@ const friends3 = addFriend(john, ringo, friends2);
 
 See how our function did correctly create all the nodes and edges for us － awesome. The reassignment of the operations to `friends1`, `friends2` and `friends3` illustrates how the different steps of state mutation have no impact on previous states:
 
-The above concepts come as heavily simplified examples. Of course you can apply concepts like [currying](https://en.wikipedia.org/wiki/Currying) the `addFriend(...)` function or [piping](https://ramdajs.com/docs/#pipe) multiple state transitons. There are no boundaries to your creativity in functional programming:
-
-
-
-```JavaScript
-const { got } = require('gotjs');
-const R = require('rambda');
-
-// Provide a curried version of addFriend
-const addFriend = (fromFriend, toFriend) => (gotOperator) => {
-    return gotOperator
-        .node(toFriend)
-        .edge({
-            from: fromFriend.id,
-            fromType: 'friend',
-            to: toFriend.id,
-            toType: 'friend'
-        });
-}
-
-const john = { id: 'person1', name: 'John' };
-const paul = { id: 'person2', name: 'Paul' };
-const george = { id: 'person3', name: 'George' };
-const ringo = { id: 'person4', name: 'Ringo' };
-
-const johnsGraph = got().node(john);
-
-// Pipe mutation operations together
-const addJohnsFriends = R.pipe(
-    addFriend(john, paul),
-    addFriend(john, george),
-    addFriend(john, ringo)
-);
-
-// Execute on johnsGraph
-const johnsFriends = addJohnsFriends(johnsGraph);
-
-console.log(johnsFriends.state());
-```
-
 ```JavaScript
 console.log(friends1.state().nodes.person1);
 // prints: { id: 'person1', name: 'John' }
@@ -163,7 +127,7 @@ console.log(friends2.state().nodes.person3);
 // prints: { id: 'person3', name: 'George' }
 ```
 
-But don't be afraid that your memory gets spilled over after tons of operations. Even though the modified parts of the state are cloned, the unchanged parts however still share the same reference:
+But don't be afraid that your memory gets spilled over after tons of operations. Even though the modified parts of the state are cloned, the unchanged parts still share the same references:
 
 ```JavaScript
 const person1FirstState = friends1.state().nodes.person1;
@@ -174,13 +138,52 @@ console.log(person1FirstState === person1SecondState);
 > This is a very basic implementation of the idea of [structural sharing](https://www.youtube.com/watch?v=e-5obm1G_FY&t=16m14s).
 
 
+The above concepts come as heavily simplified examples. Of course you can apply concepts like [currying](https://en.wikipedia.org/wiki/Currying) the `addFriend(...)` function or [piping](https://ramdajs.com/docs/#pipe) multiple state transitons. There are no boundaries to your creativity in functional programming:
+
+```JavaScript
+const { got } = require('gotjs');
+const R = require('rambda');
+
+// Provide a curried version of addFriend
+const addFriend = (fromFriend, toFriend) => (gotOperator) => gotOperator
+    .node(toFriend)
+    .edge({
+        from: fromFriend.id,
+        fromType: 'friend',
+        to: toFriend.id,
+        toType: 'friend'
+    });
+
+const john = { id: 'person1', name: 'John' };
+const paul = { id: 'person2', name: 'Paul' };
+const george = { id: 'person3', name: 'George' };
+const ringo = { id: 'person4', name: 'Ringo' };
+
+const johnsGraph = got().node(john);
+
+// Pipe mutation operations together and execute them on johnsGraph
+const johnsFriends = R.pipe(
+    addFriend(john, paul),
+    addFriend(john, george),
+    addFriend(john, ringo)
+)(johnsGraph);
+
+console.log(johnsFriends.state());
+
+// prints the same state as before
+```
+
+
+
 ### Reading the Graph State
 
 ### Start from an Existing State
 
-## Naming
+
+# Brainstorming
+<!-- ## Naming
 - graph, object, types
-- gangster, opportunistic, transformation
+- gangster, opportunistic, transformation -->
 
 ## Key Features
 - immutable state: structural sharing
@@ -199,6 +202,7 @@ console.log(person1FirstState === person1SecondState);
 - Cycle.js
 
 ## Visions
+- Ordered collections
 - Portal gothub.io
   - Right-Management
   - e2e encryption
