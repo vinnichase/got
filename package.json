@@ -1,6 +1,6 @@
 {
     "name": "gotjs",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "description": "got is a fluent, functional, zero-dependency, in-memory JavaScript graph database. You can create data structures at any degree of complexity within your JavaScript application both in the browser and Node.js. The whole database is represented in a state object which is basically a plain JavaScript object. The state is immutable, which means that existing states are never modified directly, instead a mutation will always result in a clone of the previous state, including the updates. For that reason, got is also perfect to manage heavily complex states with pure Redux.",
     "keywords": [
         "graph database",
