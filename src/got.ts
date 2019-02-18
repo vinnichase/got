@@ -9,6 +9,9 @@ const wrapStateTransitionWith =
         (stateTransition) => (...args) => wrapper(stateTransition(...args));
 const applyStateTransition = wrapStateTransitionWith(Got);
 
+const isConnected = (edge: GotEdge, fromId?: string, toId?: string, type?: string): boolean =>
+    edge.from === fromId && edge.to === toId && edge.toType === type ||
+    edge.to === fromId && edge.from === toId && edge.fromType === type;
 const filterEdges = (edges: GotEdge[], id?: string, type?: string): GotEdge[] => edges.filter(edge =>
     edge.to === id && edge.fromType === type ||
     edge.from === id && edge.toType === type);
@@ -24,6 +27,11 @@ const getLensForState = (state: GotState): GetLens => (id?: string, orElse?: Got
         first: (type: string) => getLensForState(state)(getEdgeOppositeId(
             filterEdges(state.edges, id, type)[0], id)),
         prop: (name: string) => Some<string>(id).map(i => state.nodes[i]).map(n => n[name]),
+        delete: (type: string, oppositeId: string) => {
+            const edges = state.edges.filter(edge => !isConnected(edge, id, oppositeId, type));
+            return getLensForState({ ...state, edges })(id);
+        },
+        got: () => got(state),
     } : orElse || EmptyLens;
 };
 
@@ -60,6 +68,8 @@ export interface GotLens {
     list: GetLenses;
     first: (type: string) => GotLens;
     prop: (name: string) => Option<any>;
+    delete: (type: string, id: string) => GotLens;
+    got: () => GotOperator;
 }
 
 export const EmptyLens: GotLens = {
@@ -67,6 +77,8 @@ export const EmptyLens: GotLens = {
     list: () => [],
     first: () => EmptyLens,
     prop: () => Some<any>(),
+    delete: () => EmptyLens,
+    got,
 };
 
 export interface GotState {

@@ -21,3 +21,21 @@ const uiState = homeScreen({
 } as any, houseState);
 
 console.log(uiState);
+
+const deleted = houseState
+    .lens('house1')
+    .delete('floor', 'floor1')
+    .delete('floor', 'floor2')
+    .delete('floor', 'floor3')
+    .got()
+    .lens('floor4')
+    .delete('room', 'room42')
+    .got();
+    // .state();
+
+const uiStateDeleted = homeScreen({
+    houseId: 'house1',
+    floorId: 'floor4',
+} as any, deleted);
+
+console.log(uiStateDeleted);
