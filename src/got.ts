@@ -28,8 +28,9 @@ const getLensForState = (state: GotState): GetLens => (id?: string, orElse?: Got
             filterEdges(state.edges, id, type)[0], id)),
         prop: (name: string) => Some<string>(id).map(i => state.nodes[i]).map(n => n[name]),
         delete: (type: string, oppositeId: string) => {
+            const { [oppositeId]: deleted, ...nodes} = state.nodes;
             const edges = state.edges.filter(edge => !isConnected(edge, id, oppositeId, type));
-            return getLensForState({ ...state, edges })(id);
+            return getLensForState({ nodes, edges })(id);
         },
         got: () => got(state),
     } : orElse || EmptyLens;
